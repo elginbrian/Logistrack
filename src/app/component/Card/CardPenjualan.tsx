@@ -1,18 +1,20 @@
 "use client";
 import React from "react";
-
-import { useState } from "react";
 import { ShoppingCart } from "lucide-react";
-const CardPenjualan = () => {
-  const [totalSales, setTotalSales] = useState("0");
+
+type CardPenjualanProps = {
+  totalSales?: string;
+};
+
+const CardPenjualan = ({ totalSales = "0" }: CardPenjualanProps) => {
   return (
-    <div className="bg-green-100 rounded-xl p-4 flex items-center gap-3 w-80 shadow-xl">
-      <div className="text-green-800">
-        <ShoppingCart size={30} />
+    <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-5 flex items-center gap-4 shadow-sm border border-green-200 hover:shadow-md transition-shadow">
+      <div className="bg-green-200 text-green-700 p-3 rounded-lg">
+        <ShoppingCart size={24} />
       </div>
       <div>
-        <h2 className="text-2xl font-bold text-green-900">{totalSales}</h2>
-        <p className="text-sm text-green-800">Total Penjualan</p>
+        <p className="text-sm font-medium text-green-600 mb-1">Total Penjualan</p>
+        <h2 className="text-2xl font-bold text-gray-800">{totalSales}</h2>
       </div>
     </div>
   );

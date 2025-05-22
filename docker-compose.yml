@@ -1,0 +1,61 @@
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: logistrack-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    environment:
+      - MONGO_INITDB_DATABASE=logistrack
+    networks:
+      - logistrack-network
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: logistrack-app
+    restart: unless-stopped
+    ports:
+      - "3010:3000"
+    environment:
+      - MONGODB_URI=mongodb://mongodb:27017/logistrack
+      - NODE_ENV=production
+    depends_on:
+      - mongodb
+    volumes:
+      - ./:/app
+      - /app/node_modules
+      - /app/.next
+    networks:
+      - logistrack-network
+
+  smb:
+    image: dperson/samba:latest
+    container_name: logistrack-smb
+    restart: unless-stopped
+    ports:
+      - "445:445"
+    environment:
+      - USERID=1000
+      - GROUPID=1000
+      - USER=logistrack;password123
+    volumes:
+      - ./exports:/shared/exports
+      - ./reports:/shared/reports
+    command: >
+      -s "LogisTrack Exports;/shared/exports;yes;no;no;all;logistrack"
+      -s "LogisTrack Reports;/shared/reports;yes;no;no;all;logistrack"
+      -p
+    networks:
+      - logistrack-network
+
+volumes:
+  mongodb_data:
+    name: logistrack-mongodb-data
+
+networks:
+  logistrack-network:
+    driver: bridge

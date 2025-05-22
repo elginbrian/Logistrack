@@ -1,18 +1,20 @@
 "use client";
 import React from "react";
-
-import { useState } from "react";
 import { XCircle } from "lucide-react";
-const CardHabis = () => {
-  const [totalSales, setTotalSales] = useState("0");
+
+interface CardHabisProps {
+  stockOut?: string;
+}
+
+const CardHabis = ({ stockOut = "0" }: CardHabisProps) => {
   return (
-    <div className="bg-red-100 rounded-xl p-4 flex items-center gap-3 w-80 shadow-xl">
-      <div className="text-red-800">
-        <XCircle size={30} />
+    <div className="bg-gradient-to-br from-red-50 to-red-100 rounded-xl p-5 flex items-center gap-4 shadow-sm border border-red-200 hover:shadow-md transition-shadow">
+      <div className="bg-red-200 text-red-700 p-3 rounded-lg">
+        <XCircle size={24} />
       </div>
       <div>
-        <h2 className="text-2xl font-bold text-red-900">{totalSales}</h2>
-        <p className="text-sm text-red-800">Stock Habis</p>
+        <p className="text-sm font-medium text-red-600 mb-1">Low Stock Items</p>
+        <h2 className="text-2xl font-bold text-gray-800">{stockOut}</h2>
       </div>
     </div>
   );
