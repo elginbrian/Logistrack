@@ -33,7 +33,7 @@ const ProductSchema = new mongoose.Schema<IProduct>(
   }
 );
 
-// Prevent model overwrite error during development with Next.js hot reload
 const Product = mongoose.models.Product || mongoose.model<IProduct>("Product", ProductSchema);
 
 export default Product;
+

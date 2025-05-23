@@ -15,22 +15,18 @@ const Manage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSaleForm, setShowSaleForm] = useState(false);
 
-  // Data states
   const [sales, setSales] = useState<ISale[]>([]);
   const [products, setProducts] = useState<IProduct[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Fetch data function
   const fetchData = async () => {
     setIsLoading(true);
     setApiError(null);
     try {
-      // Fetch sales
       const salesRes = await fetch("/api/sales");
       if (!salesRes.ok) throw new Error("Failed to fetch sales");
       const salesData = await salesRes.json();
 
-      // Fetch products for the sale form
       const productsRes = await fetch("/api/products");
       if (!productsRes.ok) throw new Error("Failed to fetch products");
       const productsData = await productsRes.json();
@@ -45,26 +41,20 @@ const Manage = () => {
     }
   };
 
-  // Initial data fetch
   useEffect(() => {
     fetchData();
   }, []);
 
-  // Filter sales based on search query and filters
   const filteredSales = sales.filter((sale) => {
-    // Search filter
     const matchesSearch = sale.product.toLowerCase().includes(searchQuery.toLowerCase()) || sale.customer?.toLowerCase().includes(searchQuery.toLowerCase());
 
-    // Date filter - assuming date is stored as ISO string
     const matchesDate = !dateFilter || new Date(sale.date).toLocaleDateString().includes(dateFilter);
 
-    // Status filter
     const matchesStatus = !statusFilter || sale.status === statusFilter;
 
     return matchesSearch && matchesDate && matchesStatus;
   });
 
-  // Calculate total sales amount
   const calculateTotalSales = () => {
     return sales
       .filter((sale) => sale.status === "completed")
@@ -72,7 +62,6 @@ const Manage = () => {
       .toLocaleString("id-ID");
   };
 
-  // Get total sales count
   const salesCount = sales.length;
 
   const handleRefresh = () => {
@@ -158,7 +147,6 @@ const Manage = () => {
     }
   };
 
-  // Render status badges with buttons for changing status
   const renderStatusBadge = (sale: ISale) => {
     const getStatusColorClass = (status: string) => {
       switch (status) {
@@ -177,7 +165,7 @@ const Manage = () => {
       <div className="relative group">
         <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColorClass(sale.status)}`}>{sale.status.charAt(0).toUpperCase() + sale.status.slice(1)}</span>
 
-        {/* Dropdown menu for changing status */}
+
         <div className="hidden group-hover:block absolute left-0 mt-1 bg-white shadow-md rounded-md overflow-hidden z-10 min-w-[120px]">
           {["completed", "pending", "canceled"].map(
             (status) =>
@@ -348,7 +336,7 @@ const Manage = () => {
           </div>
         )}
 
-        {/* Pagination */}
+
         <div className="flex justify-between items-center mt-6">
           <p className="text-sm text-gray-500">
             Showing {filteredSales.length} of {sales.length} transactions
@@ -361,10 +349,11 @@ const Manage = () => {
         </div>
       </div>
 
-      {/* SaleForm Modal */}
+
       <SaleForm isOpen={showSaleForm} onClose={() => setShowSaleForm(false)} onSubmit={handleSaleSubmit} productOptions={products.map((p) => p.name)} isSubmitting={isSubmitting} />
     </div>
   );
 };
 
 export default Manage;
+

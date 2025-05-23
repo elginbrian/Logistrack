@@ -29,12 +29,10 @@ const CardProductStock = ({
 }: ProductStockCardProps) => {
   const [maxValue, setMaxValue] = useState(200);
 
-  // Calculate the maximum width for the progress bars
   const calculateWidth = (value: number) => {
     return (value / maxValue) * 100;
   };
 
-  // Function to determine color based on stock level
   const getBarColor = (stock: number) => {
     if (stock < 50) return "bg-red-500";
     if (stock < 100) return "bg-yellow-500";
@@ -69,3 +67,4 @@ const CardProductStock = ({
 };
 
 export default CardProductStock;
+

@@ -15,37 +15,30 @@ const Stock = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
 
-  // Product form state
   const [showProductForm, setShowProductForm] = useState(false);
   const [editingProduct, setEditingProduct] = useState<IProduct | null>(null);
 
-  // Stock movement form state
   const [showMovementForm, setShowMovementForm] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<string | undefined>(undefined);
 
-  // Data states
   const [products, setProducts] = useState<IProduct[]>([]);
   const [movements, setMovements] = useState<IStockMovement[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Filter data based on search query
   const filteredProducts = products.filter((product) => product.name.toLowerCase().includes(searchQuery.toLowerCase()) || product.category.toLowerCase().includes(searchQuery.toLowerCase()));
 
   const filteredMovements = movements.filter((movement) => movement.product.toLowerCase().includes(searchQuery.toLowerCase()) || movement.note?.toLowerCase().includes(searchQuery.toLowerCase()));
 
   const totalStock = products.reduce((sum, item) => sum + item.stock, 0);
 
-  // Fetch data function
   const fetchData = async () => {
     setIsLoading(true);
     setApiError(null);
     try {
-      // Fetch products
       const productsRes = await fetch("/api/products");
       if (!productsRes.ok) throw new Error("Failed to fetch products");
       const productsData = await productsRes.json();
 
-      // Fetch movements
       const movementsRes = await fetch("/api/stock-movements");
       if (!movementsRes.ok) throw new Error("Failed to fetch stock movements");
       const movementsData = await movementsRes.json();
@@ -60,7 +53,6 @@ const Stock = () => {
     }
   };
 
-  // Initial data fetch
   useEffect(() => {
     fetchData();
   }, []);
@@ -325,7 +317,7 @@ const Stock = () => {
           </div>
         )}
 
-        {/* Pagination */}
+
         <div className="flex justify-between items-center mt-6">
           <p className="text-sm text-gray-500">
             Showing {activeTab === "products" ? filteredProducts.length : filteredMovements.length} of {activeTab === "products" ? products.length : movements.length} items
@@ -338,13 +330,14 @@ const Stock = () => {
         </div>
       </div>
 
-      {/* Product Form Modal */}
+
       <ProductForm isOpen={showProductForm} onClose={() => setShowProductForm(false)} onSubmit={handleProductSubmit} initialData={editingProduct || undefined} isSubmitting={isSubmitting} />
 
-      {/* Stock Movement Form Modal */}
+
       <StockMovementForm isOpen={showMovementForm} onClose={() => setShowMovementForm(false)} onSubmit={handleMovementSubmit} productOptions={products.map((p) => p.name) || []} isSubmitting={isSubmitting} initialProduct={selectedProduct} />
     </div>
   );
 };
 
 export default Stock;
+

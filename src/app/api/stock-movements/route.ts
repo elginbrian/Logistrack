@@ -32,18 +32,15 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { product, type, quantity, note } = body;
 
-    // Validation
     if (!product || !type || !quantity) {
       return NextResponse.json({ success: false, error: "Missing required fields" }, { status: 400 });
     }
 
-    // Find product to update stock
     const productDoc = await Product.findOne({ name: product });
     if (!productDoc) {
       return NextResponse.json({ success: false, error: "Product not found" }, { status: 404 });
     }
 
-    // Create stock movement
     const newMovement = await StockMovement.create({
       product,
       type,
@@ -52,7 +49,6 @@ export async function POST(req: NextRequest) {
       date: new Date(),
     });
 
-    // Update product stock
     if (type === "in") {
       productDoc.stock += quantity;
     } else if (type === "out") {
@@ -71,3 +67,4 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: false, error: "Failed to create stock movement" }, { status: 500 });
   }
 }
+

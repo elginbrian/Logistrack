@@ -30,7 +30,6 @@ const Sidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
 
   useEffect(() => {
-    // Set active item based on current path
     const currentPath = pathname === "/" ? "Home" : pathname === "/stock" ? "Stock" : pathname === "/manage" ? "Manage" : "";
     setActiveItem(currentPath);
   }, [pathname]);
@@ -112,3 +111,4 @@ const Sidebar = () => {
 };
 
 export default Sidebar;
+

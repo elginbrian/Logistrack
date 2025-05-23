@@ -37,15 +37,12 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { product, quantity, price, customer, status } = body;
 
-    // Validation
     if (!product || !quantity || !price) {
       return NextResponse.json({ success: false, error: "Missing required fields" }, { status: 400 });
     }
 
-    // Calculate total
     const total = quantity * price;
 
-    // Create sale
     const newSale = await Sale.create({
       product,
       quantity,
@@ -56,21 +53,17 @@ export async function POST(req: NextRequest) {
       date: new Date(),
     });
 
-    // If sale is completed, reduce product stock
     if (newSale.status === "completed") {
-      // Find product
       const productDoc = await Product.findOne({ name: product });
       if (productDoc) {
         if (productDoc.stock < quantity) {
           return NextResponse.json({ success: false, error: "Insufficient stock" }, { status: 400 });
         }
 
-        // Update product stock
         productDoc.stock -= quantity;
         productDoc.lastUpdated = new Date();
         await productDoc.save();
 
-        // Create stock movement record
         await StockMovement.create({
           product,
           type: "out",
@@ -108,9 +101,7 @@ export async function PUT(req: NextRequest) {
     sale.status = status;
     await sale.save();
 
-    // Handle stock changes when status changes
     if (oldStatus !== "completed" && status === "completed") {
-      // Sale has been completed, reduce stock
       const productDoc = await Product.findOne({ name: sale.product });
       if (productDoc) {
         if (productDoc.stock < sale.quantity) {
@@ -130,7 +121,6 @@ export async function PUT(req: NextRequest) {
         });
       }
     } else if (oldStatus === "completed" && status !== "completed") {
-      // Sale has been canceled/pending from completed, return stock
       const productDoc = await Product.findOne({ name: sale.product });
       if (productDoc) {
         productDoc.stock += sale.quantity;
@@ -170,7 +160,6 @@ export async function DELETE(req: NextRequest) {
       return NextResponse.json({ success: false, error: "Sale not found" }, { status: 404 });
     }
 
-    // If sale was completed, return stock
     if (sale.status === "completed") {
       const productDoc = await Product.findOne({ name: sale.product });
       if (productDoc) {
@@ -195,3 +184,4 @@ export async function DELETE(req: NextRequest) {
     return NextResponse.json({ success: false, error: "Failed to delete sale" }, { status: 500 });
   }
 }
+

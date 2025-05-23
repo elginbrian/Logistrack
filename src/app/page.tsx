@@ -19,12 +19,10 @@ const Home = () => {
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        // Fetch products
         const productsRes = await fetch("/api/products");
         if (!productsRes.ok) throw new Error("Failed to fetch products");
         const productsData = await productsRes.json();
 
-        // Fetch sales
         const salesRes = await fetch("/api/sales");
         if (!salesRes.ok) throw new Error("Failed to fetch sales");
         const salesData = await salesRes.json();
@@ -42,7 +40,6 @@ const Home = () => {
     fetchData();
   }, []);
 
-  // Calculate total sales amount
   const calculateTotalSales = () => {
     return sales
       .filter((sale) => sale.status === "completed")
@@ -50,12 +47,10 @@ const Home = () => {
       .toLocaleString("id-ID");
   };
 
-  // Calculate total stock
   const calculateTotalStock = () => {
     return products.reduce((sum, item) => sum + item.stock, 0).toString();
   };
 
-  // Calculate low stock count (items with stock less than 50)
   const calculateLowStock = () => {
     return products.filter((item) => item.stock < 50).length.toString();
   };
@@ -99,3 +94,4 @@ const Home = () => {
 };
 
 export default Home;
+

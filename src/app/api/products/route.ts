@@ -7,7 +7,6 @@ export async function GET(req: NextRequest) {
   try {
     await connectToDatabase();
 
-    // Get search query params if they exist
     const searchParams = req.nextUrl.searchParams;
     const search = searchParams.get("search") || "";
 
@@ -33,7 +32,6 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { name, stock, unit, category } = body;
 
-    // Validation
     if (!name || stock === undefined || !unit || !category) {
       return NextResponse.json({ success: false, error: "Missing required fields" }, { status: 400 });
     }
@@ -46,7 +44,6 @@ export async function POST(req: NextRequest) {
       lastUpdated: new Date(),
     });
 
-    // Create initial stock movement record
     if (stock > 0) {
       await StockMovement.create({
         product: name,
@@ -80,13 +77,11 @@ export async function PUT(req: NextRequest) {
       return NextResponse.json({ success: false, error: "Product not found" }, { status: 404 });
     }
 
-    // Update product
     product.name = name || product.name;
     product.unit = unit || product.unit;
     product.category = category || product.category;
 
     if (stock !== undefined && stock !== product.stock) {
-      // Create stock movement for the difference
       const stockDifference = stock - product.stock;
       if (stockDifference !== 0) {
         await StockMovement.create({
@@ -132,3 +127,4 @@ export async function DELETE(req: NextRequest) {
     return NextResponse.json({ success: false, error: "Failed to delete product" }, { status: 500 });
   }
 }
+
